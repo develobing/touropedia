@@ -25,10 +25,10 @@ const Header = () => {
   };
 
   return (
-    <MDBNavbar expand="lg" fixed="top" style={{ backgroundColor: '#f0e6ea' }}>
+    <MDBNavbar expand="lg" style={{ backgroundColor: '#f0e6ea' }}>
       <MDBContainer fluid>
         <MDBNavbarBrand
-          href="#"
+          href="/"
           style={{ color: '#606080', fontWeight: '600', fontSize: '22px' }}
         >
           Touropedia

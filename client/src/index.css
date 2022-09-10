@@ -11,3 +11,24 @@ body {
   font-size: 17px;
   font-weight: 500;
 }
+
+.top-left {
+  position: absolute;
+  top: 8px;
+  left: 16px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.tag-card {
+  margin: 10px 0 0 20px;
+  color: #806a78;
+}
+
+.tourName {
+  margin: 0 0 0 4px;
+  color: '#f48fb1';
+  font-size: 18px;
+  font-weight: 500;
+}

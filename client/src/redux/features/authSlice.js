@@ -5,10 +5,12 @@ export const login = createAsyncThunk(
   'auth/login',
   async ({ data, navigate, toast }, { rejectWithValue }) => {
     try {
-      const respnose = await api.signIn(data);
+      const response = await api.signIn(data);
+      console.log('login() - response', response);
+
       toast.success('Login Successfully');
       navigate('/');
-      return respnose.data;
+      return response.data;
     } catch (error) {
       console.log('login() - error: ', error);
 
@@ -21,10 +23,12 @@ export const googleSignin = createAsyncThunk(
   'auth/googleSignin',
   async ({ data, navigate, toast }, { rejectWithValue }) => {
     try {
-      const respnose = await api.googleSignin(data);
+      const response = await api.googleSignin(data);
+      console.log('googleSignin() - response', response);
+
       toast.success('Google login Successfully');
       navigate('/');
-      return respnose.data;
+      return response.data;
     } catch (error) {
       console.log('googleSignin() - error: ', error);
 
@@ -37,10 +41,12 @@ export const register = createAsyncThunk(
   'auth/register',
   async ({ data, navigate, toast }, { rejectWithValue }) => {
     try {
-      const respnose = await api.signUp(data);
+      const response = await api.signUp(data);
+      console.log('register() - response', response);
+
       toast.success('Register Successfully');
       navigate('/');
-      return respnose.data;
+      return response.data;
     } catch (error) {
       console.log('register() - error: ', error);
 
