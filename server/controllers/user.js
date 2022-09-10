@@ -19,14 +19,7 @@ export const signup = async (req, res) => {
       name: `${firstName} ${lastName}`,
     });
 
-    const token = jwt.sign(
-      {
-        email,
-        id: user._id,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
-    );
+    const token = generateToken(user);
 
     res.status(200).json({ result: getUserInfo(user), token });
   } catch (error) {
@@ -49,14 +42,7 @@ export const signin = async (req, res) => {
       return res.status(400).json({ message: 'Invalid inputs' });
     }
 
-    const token = jwt.sign(
-      {
-        email,
-        id: user._id,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
-    );
+    const token = generateToken(user);
 
     res.status(200).json({ result: getUserInfo(user), token });
   } catch (error) {
@@ -66,25 +52,22 @@ export const signin = async (req, res) => {
 };
 
 export const googleSignin = async (req, res) => {
-  const { email, name, token, googleId } = req.body;
-
   try {
-    const oldUser = await User.findOne({ email });
-    if (oldUser) {
-      const user = {
-        _id: oldUser._id.toString(),
-        email: oldUser.email,
-        name,
-      };
+    const { email, name, googleId } = req.body;
 
-      return res.status(200).json({ result: getUserInfo(user), token });
+    console.log('req.body', req.body);
+
+    // Check if user already exists with the same email
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({
+        email,
+        name,
+        googleId,
+      });
     }
 
-    const user = await User.create({
-      email,
-      name,
-      googleId,
-    });
+    const token = generateToken(user);
 
     res.status(200).json({ result: getUserInfo(user), token });
   } catch (error) {
@@ -99,4 +82,16 @@ function getUserInfo(user) {
     email: user.email,
     name: user.name,
   };
+}
+
+function generateToken(user) {
+  return jwt.sign(
+    {
+      email: user.email,
+      id: user._id,
+      googleId: user.googleId,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: '1h' }
+  );
 }

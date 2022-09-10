@@ -40,7 +40,7 @@ const Register = () => {
   }, [error, dispatch]);
 
   const onInputChange = (e) => {
-    let { name, value } = e.target;
+    const { name, value } = e.target;
     setFormValue({ ...formValue, [name]: value });
   };
 
@@ -70,7 +70,7 @@ const Register = () => {
         <h5>Sign Up</h5>
 
         <MDBCardBody>
-          <MDBValidation onSubmit={handleSubmit} noValidate className="row g-3">
+          <MDBValidation noValidate onSubmit={handleSubmit} className="row g-3">
             <div className="col-md-6">
               <MDBValidationItem invalid feedback="Please your first name.">
                 <MDBInput

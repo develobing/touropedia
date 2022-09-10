@@ -10,6 +10,14 @@ dist
 # node_modules
 node_modules
 
+# public and file uploaded folder in the server
+/server/public/*
+/server/public/uploads/*
+
+# except a sample file in file uploaded folder
+!/server/public/uploads/
+!/server/public/uploads/readme.md
+
 # etc
 .vscode
 .DS_Store

@@ -6,6 +6,7 @@ import Header from './components/Header';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import AddEditTour from './pages/AddEditTour';
 import { setUser } from './redux/features/authSlice';
 import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
@@ -30,6 +31,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/add-tour" element={<AddEditTour />} />
+          <Route path="/edit-tour/:id" element={<AddEditTour />} />
         </Routes>
       </div>
     </Router>

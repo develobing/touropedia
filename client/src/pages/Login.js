@@ -40,7 +40,7 @@ const Login = () => {
   }, [error, dispatch]);
 
   const onInputChange = (e) => {
-    let { name, value } = e.target;
+    const { name, value } = e.target;
     setFormValue({ ...formValue, [name]: value });
   };
 
@@ -62,7 +62,7 @@ const Login = () => {
     const profileResponse = await getGoogleUserInfo(token);
     const { email, name } = profileResponse.data;
     const googleId = email.substring(0, email.indexOf('@'));
-    const data = { email, name, googleId, token };
+    const data = { email, name, googleId };
     console.log('email, name, picture ', email, name);
     dispatch(googleSignin({ data, navigate, toast }));
   };
@@ -91,7 +91,7 @@ const Login = () => {
         <h5>Sign In</h5>
 
         <MDBCardBody>
-          <MDBValidation onSubmit={handleSubmit} noValidate className="row g-3">
+          <MDBValidation noValidate onSubmit={handleSubmit} className="row g-3">
             <div className="col-md-12">
               <MDBValidationItem invalid feedback="Please provide your email.">
                 <MDBInput
