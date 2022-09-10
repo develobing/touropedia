@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 import {
   MDBCard,
   MDBCardBody,
@@ -13,7 +14,8 @@ import {
   MDBIcon,
   MDBSpinner,
 } from 'mdb-react-ui-kit';
-import { login } from '../redux/features/authSlice';
+import { googleSignin, login, clearError } from '../redux/features/authSlice';
+import { useGoogleLogin } from '@react-oauth/google';
 
 const initialState = {
   email: '',
@@ -24,14 +26,18 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { user, error, loading } = useSelector((state) => state.auth);
+  const { error, loading } = useSelector((state) => state.auth);
 
   const [formValue, setFormValue] = useState(initialState);
   const { email, password } = formValue;
 
   useEffect(() => {
-    error && toast.error(error);
-  }, [error]);
+    if (error) {
+      console.log('test');
+      toast.error(error);
+      dispatch(clearError());
+    }
+  }, [error, dispatch]);
 
   const onInputChange = (e) => {
     let { name, value } = e.target;
@@ -42,9 +48,34 @@ const Login = () => {
     e.preventDefault();
 
     if (email && password) {
-      dispatch(login({ formValue, navigate, toast }));
+      dispatch(login({ data: formValue, navigate, toast }));
     }
   };
+
+  const getGoogleUserInfo = (accessToken) =>
+    axios.get(
+      `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${accessToken}`
+    );
+
+  const googleSuccess = async (result) => {
+    const token = result?.access_token;
+    const profileResponse = await getGoogleUserInfo(token);
+    const { email, name } = profileResponse.data;
+    const googleId = email.substring(0, email.indexOf('@'));
+    const data = { email, name, googleId, token };
+    console.log('email, name, picture ', email, name);
+    dispatch(googleSignin({ data, navigate, toast }));
+  };
+
+  const googleFailure = (error) => {
+    console.log('googleFailure() - error', error);
+    toast.error(error);
+  };
+
+  const loginWithGoogle = useGoogleLogin({
+    onSuccess: googleSuccess,
+    onError: googleFailure,
+  });
 
   return (
     <div
@@ -105,6 +136,24 @@ const Login = () => {
               </MDBBtn>
             </div>
           </MDBValidation>
+
+          <MDBBtn
+            className="mt-2"
+            color="danger"
+            style={{ width: '100%' }}
+            onClick={loginWithGoogle}
+          >
+            <MDBIcon fab icon="google" className="me-2" />
+            Login with Google
+          </MDBBtn>
+
+          {/* <GoogleLogin
+            className="mt-2"
+            buttonText="Login"
+            onSuccess={googleSuccess}
+            onFailure={googleFailure}
+            cookiePolicy="single_host_origin"
+          /> */}
         </MDBCardBody>
 
         <MDBCardFooter>

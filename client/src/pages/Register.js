@@ -13,7 +13,7 @@ import {
   MDBIcon,
   MDBSpinner,
 } from 'mdb-react-ui-kit';
-import { register } from '../redux/features/authSlice';
+import { register, clearError } from '../redux/features/authSlice';
 
 const initialState = {
   firstName: '',
@@ -27,14 +27,17 @@ const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { user, error, loading } = useSelector((state) => state.auth);
+  const { error, loading } = useSelector((state) => state.auth);
 
   const [formValue, setFormValue] = useState(initialState);
   const { firstName, lastName, email, password, confirmPassword } = formValue;
 
   useEffect(() => {
-    error && toast.error(error);
-  }, [error]);
+    if (error) {
+      toast.error(error);
+      dispatch(clearError());
+    }
+  }, [error, dispatch]);
 
   const onInputChange = (e) => {
     let { name, value } = e.target;
@@ -49,7 +52,7 @@ const Register = () => {
     }
 
     if (firstName && lastName && email && password && confirmPassword) {
-      dispatch(register({ formValue, navigate, toast }));
+      dispatch(register({ data: formValue, navigate, toast }));
     }
   };
 
