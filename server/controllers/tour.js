@@ -9,7 +9,7 @@ export const getTours = async (req, res) => {
     const startIndex = (Number(page) - 1) * Number(limit);
 
     const totalToursData = await Tour.find();
-    const total = await Tour.countDocuments(searchFilter);
+    const totalTours = await Tour.countDocuments(searchFilter);
     const tours = await Tour.find(searchFilter)
       .populate('creator')
       .limit(Number(limit))
@@ -18,9 +18,9 @@ export const getTours = async (req, res) => {
     res.status(200).json({
       data: tours,
       currentPage: Number(page),
-      totalTours: total,
+      totalTours: totalTours,
       totalToursData,
-      numberOfPages: Math.ceil(total / limit),
+      numberOfPages: Math.ceil(totalTours / limit),
     });
   } catch (error) {
     console.log('getTours() - error', error);
@@ -174,6 +174,25 @@ export const getAllTags = async (req, res) => {
     res.json(totalTags);
   } catch (error) {
     console.log('getAllTags() - error', error);
+    res.status(500).json({ message: 'Something went wrong' });
+  }
+};
+
+export const loadMoreTours = async (req, res) => {
+  try {
+    const { page = 1, skip, searchQuery, limit = 6 } = req.query;
+    const title = new RegExp(searchQuery, 'i');
+    const searchFilter = !!searchQuery ? { title } : {};
+
+    const totalTours = await Tour.countDocuments(searchFilter);
+    const tours = await Tour.find(searchFilter)
+      .populate('creator')
+      .limit(Number(limit))
+      .skip(Number(skip));
+
+    res.status(200).json({ skip, tours, totalTours });
+  } catch (error) {
+    console.log('loadMoreTours() - error', error);
     res.status(500).json({ message: 'Something went wrong' });
   }
 };

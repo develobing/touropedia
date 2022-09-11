@@ -41,6 +41,8 @@ export const createTour = (tourData) => API.post('/tours', tourData);
 export const updateTour = (_id, tourData) => API.put(`/tours/${_id}`, tourData);
 export const deleteTour = (_id) => API.delete(`/tours/${_id}`);
 export const likeTour = (_id) => API.put(`/tours/${_id}/likes`);
+export const loadMoreTours = ({ skip, limit }) =>
+  API.get(`/tours/load-more?skip=${skip}&limit=${limit}`);
 
 // Upload API
 export const uploadImage = (imageData) =>

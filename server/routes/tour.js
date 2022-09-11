@@ -10,6 +10,7 @@ import {
   updateTour,
   deleteTour,
   likeTour,
+  loadMoreTours,
 } from '../controllers/tour.js';
 import auth from '../middlewares/auth.js';
 
@@ -18,6 +19,7 @@ const router = express.Router();
 router.get('/', getTours);
 router.get('/tags', getAllTags);
 router.get('/tags/:tag', getToursByTag);
+router.get('/load-more', loadMoreTours);
 router.get('/users/:_userId', auth, getToursByUser);
 router.get('/:_id', getTour);
 router.post('/', auth, createTour);

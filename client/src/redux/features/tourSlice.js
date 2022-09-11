@@ -169,6 +169,22 @@ export const getAllTags = createAsyncThunk(
   }
 );
 
+export const loadMoreTours = createAsyncThunk(
+  'tour/loadMoreTours',
+  async ({ skip, limit }, { rejectWithValue }) => {
+    try {
+      const response = await api.loadMoreTours({ skip, limit });
+      console.log('loadMoreTours() - response', response);
+
+      return response.data;
+    } catch (error) {
+      console.log('loadMoreTours() - error: ', error);
+
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const tourSlice = createSlice({
   name: 'tour',
 
@@ -180,6 +196,8 @@ const tourSlice = createSlice({
     relatedTours: [],
     totalTags: [],
     totalToursData: [],
+    loadedTours: [],
+    totalTours: [],
     currentPage: 1,
     searchQuery: '',
     numberOfPages: null,
@@ -348,6 +366,19 @@ const tourSlice = createSlice({
       state.totalTags = action.payload;
     },
     [getAllTags.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.message;
+    },
+
+    [loadMoreTours.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [loadMoreTours.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.loadedTours = [...state.loadedTours, ...action.payload.tours];
+      state.totalTours = action.payload.totalTours;
+    },
+    [loadMoreTours.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload.message;
     },

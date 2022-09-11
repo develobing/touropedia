@@ -7,6 +7,7 @@ import PrivateRoute from './components/PrivateRoute';
 import Header from './components/Header';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import Tours from './pages/Tours';
 import Register from './pages/Register';
 import AddEditTour from './pages/AddEditTour';
 import SingleTour from './pages/SingleTour';
@@ -50,7 +51,7 @@ function App() {
 
         <Routes>
           <Route path="/" element={<Home socket={socket} />} />
-          <Route path="/tours/search" element={<Home />} />
+          <Route path="/tours" element={<Tours />} />
           <Route path="/tours/tags/:tag" element={<TagTours />} />
           <Route path="/tours/category/:category" element={<Category />} />
           <Route path="/login" element={<Login />} />

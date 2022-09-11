@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { MDBContainer, MDBCol, MDBRow, MDBTypography } from 'mdb-react-ui-kit';
+import { useNavigate } from 'react-router-dom';
+import {
+  MDBContainer,
+  MDBCol,
+  MDBRow,
+  MDBTypography,
+  MDBBtn,
+} from 'mdb-react-ui-kit';
 import { getTours, getAllTags } from '../redux/features/tourSlice';
 import TourCard from '../components/TourCard';
 import Spinner from '../components/Spinner';
@@ -10,6 +17,7 @@ import Categories from '../components/Categories';
 
 const Home = ({ socket }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const {
     tours,
@@ -100,11 +108,25 @@ const Home = ({ socket }) => {
           <div className="mt-4">
             <PopularTags totalTags={totalTags} />
             <Categories categoryCount={categoryCount} />
+            <MDBBtn
+              className="mt-3"
+              style={{ width: '100%' }}
+              onClick={() => navigate('/tours')}
+            >
+              View all Tours
+            </MDBBtn>
           </div>
         ) : (
           <MDBCol size="3" className="mt-4">
             <PopularTags totalTags={totalTags} />
             <Categories categoryCount={categoryCount} />
+            <MDBBtn
+              className="mt-3"
+              style={{ width: '100%' }}
+              onClick={() => navigate('/tours')}
+            >
+              View all Tours
+            </MDBBtn>
           </MDBCol>
         )}
 
