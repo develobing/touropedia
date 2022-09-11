@@ -123,3 +123,9 @@ h4:after {
 .form-input-error {
   border: 1px solid #f93154 !important;
 }
+
+.info {
+  color: #6c757d !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+}

@@ -73,7 +73,7 @@ export const googleSignin = async (req, res) => {
   }
 };
 
-function getUserInfo(user) {
+export function getUserInfo(user) {
   return {
     _id: user._id.toString(),
     email: user.email,

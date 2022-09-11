@@ -15,7 +15,7 @@ import {
 import Spinner from '../components/Spinner';
 import { getToursByTag } from '../redux/features/tourSlice';
 import { excerpt } from '../utils';
-import { TOUR_DEFAULT_IMAGE } from '../constants';
+import { DEFAULT_IMAGE } from '../constants';
 
 const TagTours = () => {
   const dispatch = useDispatch();
@@ -53,7 +53,7 @@ const TagTours = () => {
                 <MDBRow>
                   <MDBCol md="4" style={{ height: '135px' }}>
                     <MDBCardImage
-                      src={tour.imageFile || TOUR_DEFAULT_IMAGE}
+                      src={tour.imageFile || DEFAULT_IMAGE}
                       alt={tour.title}
                       fluid
                       style={{ height: '100%' }}

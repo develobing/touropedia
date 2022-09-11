@@ -14,7 +14,7 @@ import moment from 'moment';
 import RelatedTours from '../components/RelatedTours';
 import DisqusThread from '../components/DisqusThread';
 import { getTour, getRelatedTours } from '../redux/features/tourSlice';
-import { TOUR_DEFAULT_IMAGE } from '../constants';
+import { DEFAULT_IMAGE } from '../constants';
 
 const SingleTour = () => {
   const dispatch = useDispatch();
@@ -60,7 +60,7 @@ const SingleTour = () => {
       <MDBCard className="my-3">
         <MDBCardImage
           position="top"
-          src={tour?.imageFile || TOUR_DEFAULT_IMAGE}
+          src={tour?.imageFile || DEFAULT_IMAGE}
           alt={tour?.title}
           style={{ width: '100%', maxHeight: '600px' }}
         />

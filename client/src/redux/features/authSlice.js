@@ -72,6 +72,13 @@ const authSlice = createSlice({
       state.user = action.payload;
     },
 
+    setProfile(state, action) {
+      state.user.result = action.payload;
+      let localStorageResult = JSON.parse(localStorage.getItem('profile'));
+      localStorageResult.result = action.payload;
+      localStorage.setItem('profile', JSON.stringify(localStorageResult));
+    },
+
     removeUser(state) {
       localStorage.removeItem('profile');
       state.user = null;
@@ -124,5 +131,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUser, removeUser, clearError } = authSlice.actions;
+export const { setUser, setProfile, removeUser, clearError } =
+  authSlice.actions;
 export default authSlice.reducer;

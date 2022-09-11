@@ -14,7 +14,7 @@ import {
 } from 'mdb-react-ui-kit';
 import CategoryBadge from './CategoryBadge';
 import { likeTour } from '../redux/features/tourSlice';
-import { TOUR_DEFAULT_IMAGE } from '../constants';
+import { DEFAULT_IMAGE } from '../constants';
 import { excerpt } from '../utils';
 
 const TourCard = ({
@@ -93,7 +93,7 @@ const TourCard = ({
     <MDBCardGroup>
       <MDBCard className="h-100 mt-2 d-sm-flex">
         <MDBCardImage
-          src={imageFile || TOUR_DEFAULT_IMAGE}
+          src={imageFile || DEFAULT_IMAGE}
           alt={title}
           position="top"
           style={{ maxWidth: '100%', height: '180px' }}

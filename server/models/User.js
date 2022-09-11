@@ -13,7 +13,29 @@ const userSchema = mongoose.Schema(
       unique: true,
     },
 
-    id: { type: String },
+    occupation: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+
+    mobile: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+
+    address: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+
+    imageFile: {
+      type: String,
+      required: true,
+      unique: true,
+    },
 
     password: {
       type: String,

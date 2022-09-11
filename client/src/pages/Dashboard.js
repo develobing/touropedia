@@ -16,7 +16,7 @@ import {
 import Spinner from '../components/Spinner';
 import { getToursByUser, deleteTour } from '../redux/features/tourSlice';
 import { toast } from 'react-toastify';
-import { TOUR_DEFAULT_IMAGE } from '../constants';
+import { DEFAULT_IMAGE } from '../constants';
 import { excerpt } from '../utils';
 
 const Dashboard = () => {
@@ -61,7 +61,7 @@ const Dashboard = () => {
                     <MDBCardImage
                       fluid
                       position="top"
-                      src={tour?.imageFile || TOUR_DEFAULT_IMAGE}
+                      src={tour?.imageFile || DEFAULT_IMAGE}
                       alt={tour?.title}
                       style={{ height: '100%' }}
                     />

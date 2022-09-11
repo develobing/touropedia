@@ -7,6 +7,7 @@ import fileUpload from 'express-fileupload';
 import { Server } from 'socket.io';
 import userRouter from './routes/user.js';
 import tourRouter from './routes/tour.js';
+import profileRouter from './routes/profile.js';
 import uploadRouter from './routes/upload.js';
 
 // Environment variables
@@ -72,6 +73,7 @@ app.use(fileUpload());
 // Routes
 app.use('/users', userRouter);
 app.use('/tours', tourRouter);
+app.use('/profiles', profileRouter);
 app.use('/uploads', uploadRouter);
 
 // MongoDB & Server & Socket Server Connection

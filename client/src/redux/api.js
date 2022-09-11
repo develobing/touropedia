@@ -19,6 +19,11 @@ export const googleSignin = (payload) =>
   API.post('/users/google-signin', payload);
 export const signUp = (payload) => API.post('/users/signup', payload);
 
+// Profile API
+export const getProfile = ({ _id }) => API.get(`/profiles/${_id}`);
+export const updateProfile = ({ _id, data }) =>
+  API.put(`/profiles/${_id}`, data);
+
 // Tour API
 export const getTours = ({ page, searchQuery }) =>
   API.get(

@@ -13,6 +13,7 @@ import SingleTour from './pages/SingleTour';
 import Dashboard from './pages/Dashboard';
 import TagTours from './pages/TagTours';
 import Category from './pages/Category';
+import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
 import { setUser } from './redux/features/authSlice';
 import './App.css';
@@ -78,6 +79,15 @@ function App() {
             element={
               <PrivateRoute>
                 <Dashboard />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/profile/:_id"
+            element={
+              <PrivateRoute>
+                <Profile />
               </PrivateRoute>
             }
           />

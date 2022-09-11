@@ -8,6 +8,7 @@ import {
   MDBValidationItem,
   MDBInput,
   MDBTextArea,
+  MDBCardImage,
   MDBBtn,
 } from 'mdb-react-ui-kit';
 import ChipInput from 'material-ui-chip-input';
@@ -19,6 +20,7 @@ import {
   clearError,
 } from '../redux/features/tourSlice';
 import * as api from '../redux/api';
+import { DEFAULT_IMAGE } from '../constants';
 
 const initalState = {
   title: '',
@@ -39,7 +41,7 @@ const AddEditTour = () => {
   const [tourData, setTourData] = useState(initalState);
   const [categoryErrMsg, setCategoryErrMsg] = useState(null);
   const [tagErrMsg, setTagErrMsg] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFileInfo, setSelectedFileInfo] = useState(null);
 
   const { title, description, category, tags } = tourData;
 
@@ -62,8 +64,8 @@ const AddEditTour = () => {
     setTourData({ ...tourData, [name]: value });
   };
 
-  const handleImageChange = ({ file }) => {
-    setSelectedFile(file);
+  const handleImageChange = (fileInfo) => {
+    setSelectedFileInfo(fileInfo);
   };
 
   const handleImageUpload = async (file) => {
@@ -79,7 +81,10 @@ const AddEditTour = () => {
       return imageUrl;
     } catch (error) {
       console.log('handleImageUpload() - error: ', error);
-      toast.error(error);
+
+      const errorMessage = error.response?.data?.message || error.message;
+      toast.error(errorMessage);
+      throw new Error(errorMessage);
     }
   };
 
@@ -124,7 +129,11 @@ const AddEditTour = () => {
     const isValid = validateForm();
 
     if (isValid) {
-      const imageFile = await handleImageUpload(selectedFile);
+      let imageFile;
+      if (selectedFileInfo) {
+        const selectedFile = selectedFileInfo.file;
+        imageFile = await handleImageUpload(selectedFile);
+      }
 
       // Create tour
       if (!_id) {
@@ -148,6 +157,7 @@ const AddEditTour = () => {
 
   const handleClear = () => {
     setTourData(initalState);
+    setSelectedFileInfo(null);
   };
 
   return (
@@ -155,7 +165,7 @@ const AddEditTour = () => {
       className="container"
       style={{
         margin: 'auto',
-        marginTop: '120px',
+        marginTop: '20px',
         maxWidth: '450px',
         alignContent: 'center',
       }}
@@ -230,6 +240,13 @@ const AddEditTour = () => {
 
               {tagErrMsg && <div className="tagErrMsg">{tagErrMsg}</div>}
             </div>
+
+            <MDBCardImage
+              src={
+                selectedFileInfo?.base64 || tourData?.imageFile || DEFAULT_IMAGE
+              }
+              alt={tourData?.name}
+            />
 
             <div className="d-flex justify-content-start">
               <FileBase

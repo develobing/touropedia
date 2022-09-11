@@ -17,16 +17,25 @@ import {
 } from 'mdb-react-ui-kit';
 import { removeUser } from '../redux/features/authSlice';
 import { setCurrentPage, setSearchQuery } from '../redux/features/tourSlice';
+import { getProfile } from '../redux/features/profileSlice';
+import { DEFAULT_IMAGE } from '../constants';
 
 const Header = ({ socket }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { user } = useSelector((state) => state.auth);
+  const { userDetail } = useSelector((state) => state.profile);
+
   const [notifications, setNotifications] = useState([]);
   const [isOpenNotification, setIsOpenNotification] = useState(false);
 
   const token = user?.token;
+  const _userId = user?.result?._id;
+
+  useEffect(() => {
+    if (_userId) dispatch(getProfile({ _id: _userId }));
+  }, [_userId, dispatch]);
 
   useEffect(() => {
     if (socket) {
@@ -102,19 +111,13 @@ const Header = ({ socket }) => {
 
         <MDBCollapse navbar show={show}>
           <MDBNavbarNav right fullWidth={false} className="mb-2 mb-lg-0">
-            {user?.result?._id && (
-              <h5 style={{ marginTop: '27px', marginRight: '30px' }}>
-                Logged in as: {user?.result?.name}
-              </h5>
-            )}
-
             <MDBNavbarItem>
               <MDBNavbarLink href="/">
                 <p className="header-text">Home</p>
               </MDBNavbarLink>
             </MDBNavbarItem>
 
-            {user?.result?._id ? (
+            {_userId ? (
               <>
                 <MDBNavbarItem>
                   <MDBNavbarLink href="/add-tour">
@@ -160,15 +163,44 @@ const Header = ({ socket }) => {
             </div>
           </form>
 
-          {user?.result?._id && (
-            <div className="mx-3" onClick={handleBell}>
-              <MDBIcon fas icon="bell" style={{ cursor: 'pointer' }} />
-              <MDBBadge notification pill color="danger">
-                {notifications.length > 0 && (
-                  <div className="counter">{notifications.length}</div>
-                )}
-              </MDBBadge>
-            </div>
+          {_userId && (
+            <>
+              <div
+                style={{
+                  display: show ? 'inline-block' : 'block',
+                  margin: show ? '15px 0 5px 0' : '',
+                  marginLeft: '10px',
+                  cursor: 'pointer',
+                }}
+                onClick={() => navigate(`/profile/${userDetail?._id}`)}
+              >
+                <img
+                  src={userDetail?.imageFile || DEFAULT_IMAGE}
+                  alt={userDetail?.name}
+                  style={{
+                    width: '30px ',
+                    height: '30px',
+                    borderRadius: '50%',
+                  }}
+                />
+              </div>
+
+              <div
+                className="mx-3"
+                style={{
+                  display: show ? 'inline-block' : 'block',
+                  margin: show ? '15px 0 5px 0' : '',
+                }}
+                onClick={handleBell}
+              >
+                <MDBIcon fas icon="bell" style={{ cursor: 'pointer' }} />
+                <MDBBadge notification pill color="danger">
+                  {notifications.length > 0 && (
+                    <div className="counter">{notifications.length}</div>
+                  )}
+                </MDBBadge>
+              </div>
+            </>
           )}
 
           {isOpenNotification && (
