@@ -1,23 +1,8 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import {
-  MDBCard,
-  MDBCardTitle,
-  MDBCardText,
-  MDBCardBody,
-  MDBCardImage,
-  MDBCardGroup,
-  MDBRow,
-  MDBCol,
-  MDBIcon,
-  MDBBtn,
-} from 'mdb-react-ui-kit';
 import Spinner from '../components/Spinner';
-import { getToursByUser, deleteTour } from '../redux/features/tourSlice';
-import { toast } from 'react-toastify';
-import { DEFAULT_IMAGE } from '../constants';
-import { excerpt } from '../utils';
+import TourItem from '../components/TourItem';
+import { getToursByUser } from '../redux/features/tourSlice';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -31,12 +16,6 @@ const Dashboard = () => {
       dispatch(getToursByUser(_userId));
     }
   }, [_userId, dispatch]);
-
-  const handleDelete = (_id) => {
-    if (window.confirm('Are you sure to delete this tour?')) {
-      dispatch(deleteTour({ _id, toast }));
-    }
-  };
 
   return loading ? (
     <Spinner />
@@ -54,63 +33,7 @@ const Dashboard = () => {
           }}
         >
           {userTours?.map((tour) => (
-            <MDBCardGroup key={tour._id}>
-              <MDBCard>
-                <MDBRow>
-                  <MDBCol md="4" style={{ height: '135px' }}>
-                    <MDBCardImage
-                      fluid
-                      position="top"
-                      src={tour?.imageFile || DEFAULT_IMAGE}
-                      alt={tour?.title}
-                      style={{ height: '100%' }}
-                    />
-                  </MDBCol>
-
-                  <MDBCol md="8" style={{ height: '135px' }}>
-                    <MDBCardBody>
-                      <MDBCardTitle className="text-start">
-                        {tour?.title}
-                      </MDBCardTitle>
-
-                      <MDBCardText className="text-start">
-                        <small className="text-muted">
-                          {excerpt(tour?.description, 40)}
-                        </small>
-                      </MDBCardText>
-
-                      <div
-                        style={{
-                          marginTop: '-60px',
-                          marginLeft: '5px',
-                          float: 'right',
-                        }}
-                      >
-                        <Link to={`/edit-tour/${tour?._id}`}>
-                          {' '}
-                          <MDBIcon
-                            fas
-                            icon="edit"
-                            size="lg"
-                            style={{ color: '#55acee' }}
-                          />
-                        </Link>
-
-                        <MDBBtn className="mt-1" tag="a" color="none">
-                          <MDBIcon
-                            fas
-                            icon="trash"
-                            size="lg"
-                            style={{ marginLeft: '10px', color: '#dd4b39' }}
-                            onClick={() => handleDelete(tour?._id)}
-                          />
-                        </MDBBtn>
-                      </div>
-                    </MDBCardBody>
-                  </MDBCol>
-                </MDBRow>
-              </MDBCard>
-            </MDBCardGroup>
+            <TourItem tour={tour} key={tour._id} />
           ))}
         </div>
       ) : (

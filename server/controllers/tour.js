@@ -31,7 +31,7 @@ export const getTours = async (req, res) => {
 export const getToursByTag = async (req, res) => {
   try {
     const { tag } = req.params;
-    const tours = await Tour.find({ tags: { $in: tag } });
+    const tours = await Tour.find({ tags: { $in: tag } }).populate('creator');
 
     res.status(200).json(tours);
   } catch (error) {

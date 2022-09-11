@@ -16,6 +16,7 @@ import TagTours from './pages/TagTours';
 import Category from './pages/Category';
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
+import ScrollToTop from './components/ScrollToTop';
 import { setUser } from './redux/features/authSlice';
 import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
@@ -48,6 +49,7 @@ function App() {
         <Header socket={socket} />
 
         <ToastContainer />
+        <ScrollToTop />
 
         <Routes>
           <Route path="/" element={<Home socket={socket} />} />

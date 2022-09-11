@@ -1,26 +1,12 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom';
-import {
-  MDBCard,
-  MDBCardTitle,
-  MDBCardText,
-  MDBCardBody,
-  MDBCardImage,
-  MDBCardGroup,
-  MDBRow,
-  MDBCol,
-  MDBBtn,
-} from 'mdb-react-ui-kit';
+import { useParams } from 'react-router-dom';
 import Spinner from '../components/Spinner';
+import TourItem from '../components/TourItem';
 import { getTours } from '../redux/features/tourSlice';
-import { excerpt } from '../utils';
-import { DEFAULT_IMAGE } from '../constants';
 
 const Category = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-
   const { category } = useParams();
 
   const { totalToursData, loading } = useSelector((state) => state.tour);
@@ -50,42 +36,7 @@ const Category = () => {
           }}
         >
           {categoryTours.map((tour) => (
-            <MDBCardGroup key={tour._id}>
-              <MDBCard>
-                <MDBRow>
-                  <MDBCol md="4" style={{ height: '135px' }}>
-                    <MDBCardImage
-                      src={tour.imageFile || DEFAULT_IMAGE}
-                      alt={tour.title}
-                      fluid
-                      style={{ height: '100%' }}
-                    />
-                  </MDBCol>
-
-                  <MDBCol md="8" style={{ height: '135px' }}>
-                    <MDBCardBody>
-                      <MDBCardTitle className="text-start">
-                        {tour.title}
-                      </MDBCardTitle>
-                      <MDBCardText className="text-start">
-                        {excerpt(tour.description, 40)}
-                      </MDBCardText>
-
-                      <div style={{ float: 'left', marginTop: '-10px' }}>
-                        <MDBBtn
-                          size="sm"
-                          rounded
-                          color="info"
-                          onClick={() => navigate(`/tour/${tour._id}`)}
-                        >
-                          Read More
-                        </MDBBtn>
-                      </div>
-                    </MDBCardBody>
-                  </MDBCol>
-                </MDBRow>
-              </MDBCard>
-            </MDBCardGroup>
+            <TourItem tour={tour} key={tour?._id} />
           ))}
         </div>
       )}

@@ -129,3 +129,12 @@ h4:after {
   font-size: 16px !important;
   font-weight: 400 !important;
 }
+
+.scroll-to-top {
+  position: fixed;
+  bottom: 2.5rem;
+  right: 0.5rem;
+  animation: fadeIn 700ms ease-in-out 1s both;
+  cursor: pointer;
+  z-index: 1;
+}
