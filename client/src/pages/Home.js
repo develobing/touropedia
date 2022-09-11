@@ -6,7 +6,7 @@ import TourCard from '../components/TourCard';
 import Spinner from '../components/Spinner';
 import Pagination from '../components/Pagination';
 
-const Home = () => {
+const Home = ({ socket }) => {
   const dispatch = useDispatch();
 
   const { tours, searchQuery, currentPage, numberOfPages, loading } =
@@ -39,7 +39,7 @@ const Home = () => {
             <MDBContainer>
               <MDBRow className="row-cols-1 row-cols-md-3 g-2">
                 {tours.map((tour) => (
-                  <TourCard key={tour._id} {...tour} />
+                  <TourCard key={tour._id} socket={socket} {...tour} />
                 ))}
               </MDBRow>
             </MDBContainer>

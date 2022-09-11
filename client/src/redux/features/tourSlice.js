@@ -5,7 +5,6 @@ export const getTours = createAsyncThunk(
   'tour/getTours',
   async ({ page, searchQuery }, { rejectWithValue }) => {
     try {
-      console.log('searchQuery', searchQuery);
       const response = await api.getTours({ page, searchQuery });
       console.log('getTours() - response', response);
 

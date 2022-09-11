@@ -25,12 +25,13 @@ const TourCard = ({
   likes,
   likeCount,
   creator,
+  socket,
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { user } = useSelector((state) => state.auth);
-  const userId = user?.result?._id;
+  const { _id: userId, name: userName } = user?.result;
 
   const Likes = () => {
     const isAlreadyLiked = likes.some((likeUserId) => likeUserId === userId);
@@ -69,8 +70,21 @@ const TourCard = ({
   };
 
   const handleLikes = () => {
-    if (userId) dispatch(likeTour({ _id }));
-    else navigate('/login');
+    if (userId) {
+      dispatch(likeTour({ _id }));
+
+      // Send notification to the creator
+      const isAlreadyLiked = likes.find((like) => like === userId);
+      const isCreatedByUser = creator?._id === userId;
+      if (!isCreatedByUser && !isAlreadyLiked) {
+        socket.emit('sendNotification', {
+          senderName: userName,
+          receiverId: creator?._id,
+        });
+      }
+    } else {
+      navigate('/login');
+    }
   };
 
   return (

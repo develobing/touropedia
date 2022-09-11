@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
@@ -12,16 +12,29 @@ import {
   MDBCollapse,
   MDBNavbarItem,
   MDBNavbarLink,
+  MDBBadge,
+  MDBBtn,
 } from 'mdb-react-ui-kit';
 import { removeUser } from '../redux/features/authSlice';
 import { setCurrentPage, setSearchQuery } from '../redux/features/tourSlice';
 
-const Header = () => {
+const Header = ({ socket }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { user } = useSelector((state) => state.auth);
+  const [notifications, setNotifications] = useState([]);
+  const [isOpenNotification, setIsOpenNotification] = useState(false);
+
   const token = user?.token;
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('receiveNotification', (data) => {
+        setNotifications((prev) => [...prev, data]);
+      });
+    }
+  }, [socket]);
 
   // Check if the token is expired
   if (token) {
@@ -48,6 +61,23 @@ const Header = () => {
       dispatch(setSearchQuery(search));
       navigate('/');
     }
+  };
+
+  const handleBell = () => {
+    if (notifications.length) {
+      setIsOpenNotification(!isOpenNotification);
+    }
+  };
+
+  const handleRead = () => {
+    setNotifications([]);
+    setIsOpenNotification(false);
+  };
+
+  const displayNotification = ({ senderName }) => {
+    return (
+      <span className="notification-content">{senderName} liked your tour</span>
+    );
   };
 
   return (
@@ -129,6 +159,38 @@ const Header = () => {
               <MDBIcon fas icon="search" />
             </div>
           </form>
+
+          {user?.result?._id && (
+            <div className="mx-3" onClick={handleBell}>
+              <MDBIcon fas icon="bell" style={{ cursor: 'pointer' }} />
+              <MDBBadge notification pill color="danger">
+                {notifications.length > 0 && (
+                  <div className="counter">{notifications.length}</div>
+                )}
+              </MDBBadge>
+            </div>
+          )}
+
+          {isOpenNotification && (
+            <div
+              className="notification"
+              onClick={() => setIsOpenNotification(false)}
+            >
+              {notifications.map((notification) =>
+                displayNotification(notification)
+              )}
+
+              <div className="align-item-center">
+                <MDBBtn
+                  size="sm"
+                  style={{ width: '150px', backgroundColor: '#ec4a89' }}
+                  onClick={handleRead}
+                >
+                  Mark as all read
+                </MDBBtn>
+              </div>
+            </div>
+          )}
         </MDBCollapse>
       </MDBContainer>
     </MDBNavbar>

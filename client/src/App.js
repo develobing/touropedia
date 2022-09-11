@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import { io } from 'socket.io-client';
 import PrivateRoute from './components/PrivateRoute';
 import Header from './components/Header';
 import Home from './pages/Home';
@@ -17,6 +18,8 @@ import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
+  const [socket, setSocket] = useState(null);
+
   const dispatch = useDispatch();
 
   const user = JSON.parse(localStorage.getItem('profile'));
@@ -25,15 +28,26 @@ function App() {
     dispatch(setUser(user));
   }, []);
 
+  useEffect(() => {
+    setSocket(io(process.env.REACT_APP_SOCKET_HOST));
+  }, []);
+
+  useEffect(() => {
+    socket?.emit('newUser', {
+      userId: user?.result?._id,
+      userName: user?.result?.name,
+    });
+  }, [socket, user]);
+
   return (
     <Router>
       <div className="App">
-        <Header />
+        <Header socket={socket} />
 
         <ToastContainer />
 
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home socket={socket} />} />
           <Route path="/tours/search" element={<Home />} />
           <Route path="/tours/tags/:tag" element={<TagTours />} />
           <Route path="/login" element={<Login />} />
