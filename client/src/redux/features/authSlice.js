@@ -8,8 +8,9 @@ export const login = createAsyncThunk(
       const response = await api.signIn(data);
       console.log('login() - response', response);
 
-      toast.success('Login Successfully');
+      toast.success('Login successfully');
       navigate('/');
+
       return response.data;
     } catch (error) {
       console.log('login() - error: ', error);
@@ -26,8 +27,9 @@ export const googleSignin = createAsyncThunk(
       const response = await api.googleSignin(data);
       console.log('googleSignin() - response', response);
 
-      toast.success('Google login Successfully');
+      toast.success('Google login successfully');
       navigate('/');
+
       return response.data;
     } catch (error) {
       console.log('googleSignin() - error: ', error);
@@ -44,8 +46,9 @@ export const register = createAsyncThunk(
       const response = await api.signUp(data);
       console.log('register() - response', response);
 
-      toast.success('Register Successfully');
+      toast.success('Register successfully');
       navigate('/');
+
       return response.data;
     } catch (error) {
       console.log('register() - error: ', error);

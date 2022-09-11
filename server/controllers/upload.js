@@ -2,23 +2,18 @@ import path from 'path';
 
 export const uploadImage = async (req, res) => {
   try {
-    console.log('req.files', req.files);
-
     const file = req.files.image;
     if (!file) {
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
-    if (file.size > 1024 * 1024) {
-      removeTmp(file.tempFilePath);
+    if (file.size > 2 * 1024 * 1024) {
       return res
-
         .status(400)
-        .json({ message: 'File size is too large. Max 1mb' });
+        .json({ message: 'File size is too large. Max 2mb' });
     }
 
     if (file.mimetype !== 'image/jpeg' && file.mimetype !== 'image/png') {
-      removeTmp(file.tempFilePath);
       return res
         .status(400)
         .json({ message: 'File format is incorrect. Only .png and .jpeg' });

@@ -10,6 +10,8 @@ import Register from './pages/Register';
 import AddEditTour from './pages/AddEditTour';
 import SingleTour from './pages/SingleTour';
 import Dashboard from './pages/Dashboard';
+import TagTours from './pages/TagTours';
+import NotFound from './pages/NotFound';
 import { setUser } from './redux/features/authSlice';
 import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
@@ -32,6 +34,8 @@ function App() {
 
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/tours/search" element={<Home />} />
+          <Route path="/tours/tags/:tag" element={<TagTours />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route
@@ -61,6 +65,8 @@ function App() {
               </PrivateRoute>
             }
           />
+
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
     </Router>

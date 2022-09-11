@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import jwtDecode from 'jwt-decode';
 import {
   MDBNavbar,
   MDBContainer,
@@ -12,16 +14,42 @@ import {
   MDBNavbarLink,
 } from 'mdb-react-ui-kit';
 import { removeUser } from '../redux/features/authSlice';
+import { getToursBySearch } from '../redux/features/tourSlice';
 
 const Header = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { user } = useSelector((state) => state.auth);
+  const token = user?.token;
+
+  // Check if the token is expired
+  if (token) {
+    const decodeToken = jwtDecode(token);
+    const isTokenExpired = decodeToken.exp * 1000 < new Date().getTime();
+
+    if (isTokenExpired) {
+      dispatch(removeUser());
+    }
+  }
 
   const [show, setShow] = useState(false);
+  const [search, setSearch] = useState('');
 
   const handleLogout = () => {
     dispatch(removeUser());
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+
+    if (search) {
+      dispatch(getToursBySearch(search));
+      navigate(`/tours/search?searchQuery=${search}`);
+      setSearch('');
+    } else {
+      navigate('/');
+    }
   };
 
   return (
@@ -47,7 +75,7 @@ const Header = () => {
         <MDBCollapse navbar show={show}>
           <MDBNavbarNav right fullWidth={false} className="mb-2 mb-lg-0">
             {user?.result?._id && (
-              <h5 style={{ marginTop: '17px', marginRight: '30px' }}>
+              <h5 style={{ marginTop: '27px', marginRight: '30px' }}>
                 Logged in as: {user?.result?.name}
               </h5>
             )}
@@ -73,7 +101,7 @@ const Header = () => {
                 </MDBNavbarItem>
 
                 <MDBNavbarItem>
-                  <MDBNavbarLink href="/logout" onClick={handleLogout}>
+                  <MDBNavbarLink href="/" onClick={handleLogout}>
                     <p className="header-text">Logout</p>
                   </MDBNavbarLink>
                 </MDBNavbarItem>
@@ -86,6 +114,23 @@ const Header = () => {
               </MDBNavbarItem>
             )}
           </MDBNavbarNav>
+
+          <form className="d-flex input-group w-auto" onSubmit={handleSearch}>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search Tour"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+
+            <div
+              style={{ marginTop: '5px', marginLeft: '5px' }}
+              onClick={handleSearch}
+            >
+              <MDBIcon fas icon="search" />
+            </div>
+          </form>
         </MDBCollapse>
       </MDBContainer>
     </MDBNavbar>

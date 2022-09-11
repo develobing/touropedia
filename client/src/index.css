@@ -6,7 +6,7 @@ body {
 }
 
 .header-text {
-  margin-top: 7px;
+  margin-top: 17px;
   color: #606080;
   font-size: 17px;
   font-weight: 500;
@@ -22,13 +22,46 @@ body {
 }
 
 .tag-card {
-  margin: 10px 0 0 20px;
+  padding: 10px 20px 0 20px;
   color: #806a78;
 }
 
 .tourName {
   margin: 0 0 0 4px;
-  color: '#f48fb1';
+  color: #f48fb1;
   font-size: 18px;
   font-weight: 500;
+}
+
+.tagErrMsg {
+  margin-top: 5px;
+  color: #f93154;
+  font-size: 14px;
+  text-align: left;
+}
+
+h4 {
+  overflow: hidden;
+  text-align: center;
+}
+
+h4:before,
+h4:after {
+  content: '';
+  position: relative;
+  background-color: #000;
+  display: inline-block;
+  width: 50%;
+  height: 1px;
+  vertical-align: middle;
+}
+
+h4:before {
+  right: 0.5em;
+  margin-left: -50%;
+}
+
+h4:after {
+  left: 0.5rem;
+  margin-right: -50%;
 }

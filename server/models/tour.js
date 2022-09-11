@@ -10,14 +10,20 @@ const tourSchema = new mongoose.Schema(
     },
     imageFile: String,
     tags: [String],
-    likeCount: {
-      type: Number,
-      default: 0,
+    likes: {
+      type: [mongoose.Schema.Types.ObjectId],
+      default: [],
     },
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
+
+tourSchema.virtual('likeCount').get(function () {
+  return this.likes.length;
+});
 
 export default mongoose.model('Tour', tourSchema);

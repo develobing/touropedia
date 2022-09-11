@@ -2,17 +2,20 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { MDBContainer, MDBCol, MDBRow, MDBTypography } from 'mdb-react-ui-kit';
 import { getTours } from '../redux/features/tourSlice';
-import CardTour from './CardTour';
+import TourCard from '../components/TourCard';
 import Spinner from '../components/Spinner';
+import Pagination from '../components/Pagination';
 
 const Home = () => {
   const dispatch = useDispatch();
 
-  const { tours, loading, error } = useSelector((state) => state.tour);
+  const { tours, currentPage, numberOfPages, loading } = useSelector(
+    (state) => state.tour
+  );
 
   useEffect(() => {
-    dispatch(getTours());
-  }, []);
+    dispatch(getTours(currentPage));
+  }, [currentPage, dispatch]);
 
   return loading ? (
     <Spinner />
@@ -29,7 +32,7 @@ const Home = () => {
         {tours.length === 0 ? (
           <MDBCol>
             <MDBTypography tag="h5" variant="h5">
-              No Tours Available
+              No Tours Found
             </MDBTypography>
           </MDBCol>
         ) : (
@@ -37,13 +40,17 @@ const Home = () => {
             <MDBContainer>
               <MDBRow className="row-cols-1 row-cols-md-3 g-2">
                 {tours.map((tour) => (
-                  <CardTour key={tour._id} {...tour} />
+                  <TourCard key={tour._id} {...tour} />
                 ))}
               </MDBRow>
             </MDBContainer>
           </MDBCol>
         )}
       </MDBRow>
+
+      {tours.length > 0 && (
+        <Pagination currentPage={currentPage} numberOfPages={numberOfPages} />
+      )}
     </div>
   );
 };

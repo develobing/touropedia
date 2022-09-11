@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
-  MDBInput,
-  MDBBtn,
   MDBCard,
   MDBCardBody,
   MDBValidation,
   MDBValidationItem,
-  MDBSpinner,
+  MDBInput,
+  MDBTextArea,
+  MDBBtn,
 } from 'mdb-react-ui-kit';
 import ChipInput from 'material-ui-chip-input';
 import FileBase from 'react-file-base64';
 import { toast } from 'react-toastify';
-import { createTour, clearError } from '../redux/features/tourSlice';
+import {
+  createTour,
+  updateTour,
+  clearError,
+} from '../redux/features/tourSlice';
 import * as api from '../redux/api';
 
 const initalState = {
@@ -25,13 +29,22 @@ const initalState = {
 const AddEditTour = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { _id } = useParams();
 
-  const { loading, error } = useSelector((state) => state.tour);
+  const { userTours, loading, error } = useSelector((state) => state.tour);
 
   const [tourData, setTourData] = useState(initalState);
+  const [tagErrMsg, setTagErrMsg] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
 
   const { title, description, tags } = tourData;
+
+  useEffect(() => {
+    if (_id) {
+      const singleTour = userTours.find((tour) => tour._id === _id);
+      setTourData(singleTour);
+    }
+  }, [_id]);
 
   useEffect(() => {
     if (error) {
@@ -68,6 +81,7 @@ const AddEditTour = () => {
 
   const handleAddTag = (tag) => {
     setTourData({ ...tourData, tags: [...tourData.tags, tag] });
+    setTagErrMsg(null);
   };
 
   const handleDeleteTag = (tagToDelete) => {
@@ -80,11 +94,30 @@ const AddEditTour = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (tags.length === 0) {
+      setTagErrMsg('Please add at least one tag');
+      return;
+    }
+
     const imageFile = await handleImageUpload(selectedFile);
 
-    if (title && description && tags) {
+    // Create tour
+    if (!_id) {
+      if (title && description && tags) {
+        dispatch(
+          createTour({
+            data: { ...tourData, imageFile },
+            navigate,
+            toast,
+          })
+        );
+      }
+    }
+
+    // Update tour
+    else {
       dispatch(
-        createTour({ data: { ...tourData, imageFile }, navigate, toast })
+        updateTour({ _id, data: { ...tourData, imageFile }, toast, navigate })
       );
     }
   };
@@ -104,7 +137,7 @@ const AddEditTour = () => {
       }}
     >
       <MDBCard>
-        <h5>Add Tour</h5>
+        <h5>{_id ? 'Update Tour' : 'Add Tour'}</h5>
 
         <MDBCardBody>
           <MDBValidation noValidate onSubmit={handleSubmit} className="row g-3">
@@ -124,15 +157,15 @@ const AddEditTour = () => {
 
             <div className="col-md-12">
               <MDBValidationItem invalid feedback="Please provide description.">
-                <MDBInput
+                <MDBTextArea
                   required
                   className="form-control"
                   type="text"
                   name="description"
                   placeholder="Enter Description"
+                  rows={4}
                   value={description}
                   onChange={onInputChange}
-                  style={{ height: '100px' }}
                 />
               </MDBValidationItem>
             </div>
@@ -147,6 +180,8 @@ const AddEditTour = () => {
                 onAdd={(tag) => handleAddTag(tag)}
                 onDelete={(tag) => handleDeleteTag(tag)}
               />
+
+              {tagErrMsg && <div className="tagErrMsg">{tagErrMsg}</div>}
             </div>
 
             <div className="d-flex justify-content-start">
@@ -158,7 +193,9 @@ const AddEditTour = () => {
             </div>
 
             <div className="col-12">
-              <MDBBtn style={{ width: '100%' }}>Submit</MDBBtn>
+              <MDBBtn style={{ width: '100%' }}>
+                {_id ? 'Update' : 'Submit'}
+              </MDBBtn>
               <MDBBtn
                 style={{ width: '100%' }}
                 className="mt-2"

@@ -3,9 +3,9 @@ import * as api from '../api';
 
 export const getTours = createAsyncThunk(
   'tour/getTours',
-  async (_, { rejectWithValue }) => {
+  async (page, { rejectWithValue }) => {
     try {
-      const response = await api.getTours();
+      const response = await api.getTours(page);
       console.log('getTours() - response', response);
 
       return response.data;
@@ -17,16 +17,48 @@ export const getTours = createAsyncThunk(
   }
 );
 
-export const getTour = createAsyncThunk(
-  'tour/getTour',
-  async (_id, { rejectWithValue }) => {
+export const getToursBySearch = createAsyncThunk(
+  'tour/getToursBySearch',
+  async (searchQuery, { rejectWithValue }) => {
     try {
-      const response = await api.getTour(_id);
-      console.log('getTour() - response', response);
+      const response = await api.getToursBySearch(searchQuery);
+      console.log('getToursBySearch() - response', response);
 
       return response.data;
     } catch (error) {
-      console.log('getTour() - error: ', error);
+      console.log('getToursBySearch() - error: ', error);
+
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const getToursByTag = createAsyncThunk(
+  'tour/getToursByTag',
+  async (tag, { rejectWithValue }) => {
+    try {
+      const response = await api.getToursByTag(tag);
+      console.log('getToursByTag() - response', response);
+
+      return response.data;
+    } catch (error) {
+      console.log('getToursByTag() - error: ', error);
+
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const getRelatedTours = createAsyncThunk(
+  'tour/getRelatedTours',
+  async ({ _id, data }, { rejectWithValue }) => {
+    try {
+      const response = await api.getRelatedTours(_id, data);
+      console.log('getRelatedTours() - response', response);
+
+      return response.data;
+    } catch (error) {
+      console.log('getRelatedTours() - error: ', error);
 
       return rejectWithValue(error.response.data);
     }
@@ -49,6 +81,22 @@ export const getToursByUser = createAsyncThunk(
   }
 );
 
+export const getTour = createAsyncThunk(
+  'tour/getTour',
+  async (_id, { rejectWithValue }) => {
+    try {
+      const response = await api.getTour(_id);
+      console.log('getTour() - response', response);
+
+      return response.data;
+    } catch (error) {
+      console.log('getTour() - error: ', error);
+
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const createTour = createAsyncThunk(
   'tour/createTour',
   async ({ data, navigate, toast }, { rejectWithValue }) => {
@@ -56,11 +104,65 @@ export const createTour = createAsyncThunk(
       const response = await api.createTour(data);
       console.log('createTour() - response', response);
 
-      toast.success('Tour added Successfully');
+      toast.success('Tour added successfully');
       navigate('/');
+
       return response.data;
     } catch (error) {
       console.log('createTour() - error: ', error);
+
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateTour = createAsyncThunk(
+  'tour/updateTour',
+  async ({ _id, data, toast, navigate }, { rejectWithValue }) => {
+    try {
+      const response = await api.updateTour(_id, data);
+      console.log('updateTour() - response', response);
+
+      toast.success('Tour updated successfully');
+      navigate('/');
+
+      return response.data;
+    } catch (error) {
+      console.log('updateTour() - error: ', error);
+
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const deleteTour = createAsyncThunk(
+  'tour/deleteTour',
+  async ({ _id, toast }, { rejectWithValue }) => {
+    try {
+      const response = await api.deleteTour(_id);
+      console.log('deleteTour() - response', response);
+
+      toast.success('Tour deleted successfully');
+
+      return response.data;
+    } catch (error) {
+      console.log('deleteTour() - error: ', error);
+
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const likeTour = createAsyncThunk(
+  'tour/likeTour',
+  async ({ _id }, { rejectWithValue }) => {
+    try {
+      const response = await api.likeTour(_id);
+      console.log('likeTour() - response', response);
+
+      return response.data;
+    } catch (error) {
+      console.log('likeTour() - error: ', error);
 
       return rejectWithValue(error.response.data);
     }
@@ -74,11 +176,20 @@ const tourSlice = createSlice({
     tour: {},
     tours: [],
     userTours: [],
+    tagTours: [],
+    relatedTours: [],
+    currentPage: 1,
+    numberOfPages: null,
     error: '',
     loading: false,
   },
 
   reducers: {
+    setCurrentPage: (state, action) => {
+      console.log('setCurrentPage() - action.payload', action.payload);
+      state.currentPage = action.payload;
+    },
+
     clearError(state) {
       state.error = '';
     },
@@ -90,21 +201,46 @@ const tourSlice = createSlice({
     },
     [getTours.fulfilled]: (state, action) => {
       state.loading = false;
-      state.tours = action.payload;
+      state.tours = action.payload.data;
+      state.numberOfPages = action.payload.numberOfPages;
     },
     [getTours.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload.message;
     },
 
-    [getTour.pending]: (state, action) => {
+    [getToursBySearch.pending]: (state, action) => {
       state.loading = true;
     },
-    [getTour.fulfilled]: (state, action) => {
+    [getToursBySearch.fulfilled]: (state, action) => {
       state.loading = false;
-      state.tour = action.payload;
+      state.tours = action.payload;
     },
-    [getTour.rejected]: (state, action) => {
+    [getToursBySearch.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.message;
+    },
+
+    [getToursByTag.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [getToursByTag.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.tagTours = action.payload;
+    },
+    [getToursByTag.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.message;
+    },
+
+    [getRelatedTours.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [getRelatedTours.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.relatedTours = action.payload;
+    },
+    [getRelatedTours.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload.message;
     },
@@ -121,6 +257,18 @@ const tourSlice = createSlice({
       state.error = action.payload.message;
     },
 
+    [getTour.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [getTour.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.tour = action.payload;
+    },
+    [getTour.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.message;
+    },
+
     [createTour.pending]: (state, action) => {
       state.loading = true;
     },
@@ -132,8 +280,72 @@ const tourSlice = createSlice({
       state.loading = false;
       state.error = action.payload.message;
     },
+
+    [updateTour.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [updateTour.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.tour = action.payload;
+
+      const { arg } = action.meta;
+
+      if (arg) {
+        state.userTours = state.userTours.map((tour) =>
+          tour._id === arg._id ? action.payload : tour
+        );
+        state.tours = state.tours.filter((tour) =>
+          tour._id === arg._id ? action.payload : tour
+        );
+      }
+    },
+    [updateTour.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.message;
+    },
+
+    [deleteTour.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [deleteTour.fulfilled]: (state, action) => {
+      state.loading = false;
+      const { arg } = action.meta;
+
+      if (arg) {
+        state.userTours = state.userTours.filter(
+          (tour) => tour._id !== arg._id
+        );
+        state.tours = state.tours.filter((tour) => tour._id !== arg._id);
+      }
+    },
+    [deleteTour.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.message;
+    },
+
+    [likeTour.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [likeTour.fulfilled]: (state, action) => {
+      state.loading = false;
+      const { arg } = action.meta;
+
+      if (arg) {
+        state.tours = state.tours.map((tour) =>
+          tour._id === arg._id ? action.payload : tour
+        );
+
+        state.relatedTours = state.relatedTours.map((tour) =>
+          tour._id === arg._id ? action.payload : tour
+        );
+      }
+    },
+    [likeTour.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.message;
+    },
   },
 });
 
-export const { clearError } = tourSlice.actions;
+export const { setCurrentPage, clearError } = tourSlice.actions;
 export default tourSlice.reducer;

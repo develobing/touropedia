@@ -3,9 +3,8 @@ import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
 
 export const signup = async (req, res) => {
-  const { email, password, firstName, lastName } = req.body;
-
   try {
+    const { email, password, firstName, lastName } = req.body;
     const oldUser = await User.findOne({ email });
 
     if (oldUser) {
@@ -29,9 +28,9 @@ export const signup = async (req, res) => {
 };
 
 export const signin = async (req, res) => {
-  const { email, password } = req.body;
-
   try {
+    const { email, password } = req.body;
+
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "User doesn't exist" });
@@ -54,8 +53,6 @@ export const signin = async (req, res) => {
 export const googleSignin = async (req, res) => {
   try {
     const { email, name, googleId } = req.body;
-
-    console.log('req.body', req.body);
 
     // Check if user already exists with the same email
     let user = await User.findOne({ email });
@@ -92,6 +89,6 @@ function generateToken(user) {
       googleId: user.googleId,
     },
     process.env.JWT_SECRET,
-    { expiresIn: '1h' }
+    { expiresIn: process.env.JWT_EXPIRE }
   );
 }
