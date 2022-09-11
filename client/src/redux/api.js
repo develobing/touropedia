@@ -20,9 +20,12 @@ export const googleSignin = (payload) =>
 export const signUp = (payload) => API.post('/users/signup', payload);
 
 // Tour API
-export const getTours = (page) => API.get(`/tours?page=${page}`);
-export const getToursBySearch = (searchQuery) =>
-  API.get(`/tours/search?searchQuery=${searchQuery}`);
+export const getTours = ({ page, searchQuery }) =>
+  API.get(
+    `/tours?${page ? `page=${page}` : ''}${
+      searchQuery ? `&searchQuery=${searchQuery}` : ''
+    }`
+  );
 export const getToursByTag = (tag) => API.get(`/tours/tags/${tag}`);
 export const getRelatedTours = (_id, data) =>
   API.post(`/tours/${_id}/related-tours`, data);

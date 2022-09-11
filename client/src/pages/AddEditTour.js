@@ -31,7 +31,7 @@ const AddEditTour = () => {
   const navigate = useNavigate();
   const { _id } = useParams();
 
-  const { userTours, loading, error } = useSelector((state) => state.tour);
+  const { userTours, error } = useSelector((state) => state.tour);
 
   const [tourData, setTourData] = useState(initalState);
   const [tagErrMsg, setTagErrMsg] = useState(null);
@@ -44,14 +44,14 @@ const AddEditTour = () => {
       const singleTour = userTours.find((tour) => tour._id === _id);
       setTourData(singleTour);
     }
-  }, [_id]);
+  }, [_id, userTours]);
 
   useEffect(() => {
     if (error) {
       toast.error(error);
       dispatch(clearError);
     }
-  }, [error]);
+  }, [error, dispatch]);
 
   const onInputChange = (e) => {
     const { name, value } = e.target;

@@ -2,7 +2,6 @@ import express from 'express';
 import {
   getTours,
   getTour,
-  getToursBySearch,
   getToursByTag,
   getToursByUser,
   getRelatedTours,
@@ -16,7 +15,6 @@ import auth from '../middlewares/auth.js';
 const router = express.Router();
 
 router.get('/', getTours);
-router.get('/search', getToursBySearch);
 router.get('/tags/:tag', getToursByTag);
 router.get('/users/:_userId', auth, getToursByUser);
 router.get('/:_id', getTour);

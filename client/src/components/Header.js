@@ -14,7 +14,7 @@ import {
   MDBNavbarLink,
 } from 'mdb-react-ui-kit';
 import { removeUser } from '../redux/features/authSlice';
-import { getToursBySearch } from '../redux/features/tourSlice';
+import { setCurrentPage, setSearchQuery } from '../redux/features/tourSlice';
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -44,10 +44,8 @@ const Header = () => {
     e.preventDefault();
 
     if (search) {
-      dispatch(getToursBySearch(search));
-      navigate(`/tours/search?searchQuery=${search}`);
-      setSearch('');
-    } else {
+      dispatch(setCurrentPage(1));
+      dispatch(setSearchQuery(search));
       navigate('/');
     }
   };
@@ -125,7 +123,7 @@ const Header = () => {
             />
 
             <div
-              style={{ marginTop: '5px', marginLeft: '5px' }}
+              style={{ marginTop: '5px', marginLeft: '5px', cursor: 'pointer' }}
               onClick={handleSearch}
             >
               <MDBIcon fas icon="search" />

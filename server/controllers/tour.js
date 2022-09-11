@@ -3,11 +3,13 @@ import Tour from '../models/tour.js';
 
 export const getTours = async (req, res) => {
   try {
-    const { page, limit = 6 } = req.query;
-
+    const { page = 1, searchQuery, limit = 6 } = req.query;
+    const title = new RegExp(searchQuery, 'i');
+    const searchFilter = !!searchQuery ? { title } : {};
     const startIndex = (Number(page) - 1) * Number(limit);
-    const total = await Tour.countDocuments();
-    const tours = await Tour.find()
+
+    const total = await Tour.countDocuments(searchFilter);
+    const tours = await Tour.find(searchFilter)
       .populate('creator')
       .limit(Number(limit))
       .skip(startIndex);
@@ -20,19 +22,6 @@ export const getTours = async (req, res) => {
     });
   } catch (error) {
     console.log('getTours() - error', error);
-    res.status(500).json({ message: 'Something went wrong' });
-  }
-};
-
-export const getToursBySearch = async (req, res) => {
-  try {
-    const { searchQuery } = req.query;
-    const title = new RegExp(searchQuery, 'i');
-    const tours = await Tour.find({ title });
-
-    res.status(200).json(tours);
-  } catch (error) {
-    console.log('getToursBySearch() - error', error);
     res.status(500).json({ message: 'Something went wrong' });
   }
 };

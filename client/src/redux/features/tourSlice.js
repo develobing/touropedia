@@ -3,30 +3,15 @@ import * as api from '../api';
 
 export const getTours = createAsyncThunk(
   'tour/getTours',
-  async (page, { rejectWithValue }) => {
+  async ({ page, searchQuery }, { rejectWithValue }) => {
     try {
-      const response = await api.getTours(page);
+      console.log('searchQuery', searchQuery);
+      const response = await api.getTours({ page, searchQuery });
       console.log('getTours() - response', response);
 
       return response.data;
     } catch (error) {
       console.log('getTours() - error: ', error);
-
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const getToursBySearch = createAsyncThunk(
-  'tour/getToursBySearch',
-  async (searchQuery, { rejectWithValue }) => {
-    try {
-      const response = await api.getToursBySearch(searchQuery);
-      console.log('getToursBySearch() - response', response);
-
-      return response.data;
-    } catch (error) {
-      console.log('getToursBySearch() - error: ', error);
 
       return rejectWithValue(error.response.data);
     }
@@ -179,15 +164,19 @@ const tourSlice = createSlice({
     tagTours: [],
     relatedTours: [],
     currentPage: 1,
+    searchQuery: '',
     numberOfPages: null,
     error: '',
     loading: false,
   },
 
   reducers: {
-    setCurrentPage: (state, action) => {
-      console.log('setCurrentPage() - action.payload', action.payload);
+    setCurrentPage(state, action) {
       state.currentPage = action.payload;
+    },
+
+    setSearchQuery(state, action) {
+      state.searchQuery = action.payload;
     },
 
     clearError(state) {
@@ -205,18 +194,6 @@ const tourSlice = createSlice({
       state.numberOfPages = action.payload.numberOfPages;
     },
     [getTours.rejected]: (state, action) => {
-      state.loading = false;
-      state.error = action.payload.message;
-    },
-
-    [getToursBySearch.pending]: (state, action) => {
-      state.loading = true;
-    },
-    [getToursBySearch.fulfilled]: (state, action) => {
-      state.loading = false;
-      state.tours = action.payload;
-    },
-    [getToursBySearch.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload.message;
     },
@@ -347,5 +324,5 @@ const tourSlice = createSlice({
   },
 });
 
-export const { setCurrentPage, clearError } = tourSlice.actions;
+export const { setCurrentPage, setSearchQuery, clearError } = tourSlice.actions;
 export default tourSlice.reducer;

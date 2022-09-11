@@ -1,8 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import TourCard from './TourCard';
-import { excerpt } from '../utils';
-import { TOUR_DEFAULT_IMAGE } from '../constants';
 
 const RelatedTours = ({ relatedTours }) => {
   return (

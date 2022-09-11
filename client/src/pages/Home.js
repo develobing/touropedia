@@ -9,13 +9,12 @@ import Pagination from '../components/Pagination';
 const Home = () => {
   const dispatch = useDispatch();
 
-  const { tours, currentPage, numberOfPages, loading } = useSelector(
-    (state) => state.tour
-  );
+  const { tours, searchQuery, currentPage, numberOfPages, loading } =
+    useSelector((state) => state.tour);
 
   useEffect(() => {
-    dispatch(getTours(currentPage));
-  }, [currentPage, dispatch]);
+    dispatch(getTours({ page: currentPage, searchQuery }));
+  }, [currentPage, searchQuery, dispatch]);
 
   return loading ? (
     <Spinner />
