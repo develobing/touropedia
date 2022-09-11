@@ -5,6 +5,7 @@ import {
   getToursByTag,
   getToursByUser,
   getRelatedTours,
+  getAllTags,
   createTour,
   updateTour,
   deleteTour,
@@ -15,6 +16,7 @@ import auth from '../middlewares/auth.js';
 const router = express.Router();
 
 router.get('/', getTours);
+router.get('/tags', getAllTags);
 router.get('/tags/:tag', getToursByTag);
 router.get('/users/:_userId', auth, getToursByUser);
 router.get('/:_id', getTour);

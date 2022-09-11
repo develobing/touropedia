@@ -12,6 +12,7 @@ import {
   MDBIcon,
   MDBTooltip,
 } from 'mdb-react-ui-kit';
+import CategoryBadge from './CategoryBadge';
 import { likeTour } from '../redux/features/tourSlice';
 import { TOUR_DEFAULT_IMAGE } from '../constants';
 import { excerpt } from '../utils';
@@ -20,6 +21,7 @@ const TourCard = ({
   _id,
   title,
   description,
+  category,
   tags,
   imageFile,
   likes,
@@ -31,7 +33,7 @@ const TourCard = ({
   const navigate = useNavigate();
 
   const { user } = useSelector((state) => state.auth);
-  const { _id: userId, name: userName } = user?.result;
+  const { _id: userId, name: userName } = user?.result || {};
 
   const Likes = () => {
     const isAlreadyLiked = likes.some((likeUserId) => likeUserId === userId);
@@ -98,6 +100,8 @@ const TourCard = ({
         />
 
         <div className="top-left">{creator?.name}</div>
+
+        <CategoryBadge category={category} />
 
         <div
           className="text-start tag-card"

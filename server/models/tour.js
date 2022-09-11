@@ -4,15 +4,16 @@ const tourSchema = new mongoose.Schema(
   {
     title: String,
     description: String,
-    creator: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    },
+    category: String,
     imageFile: String,
     tags: [String],
     likes: {
       type: [mongoose.Schema.Types.ObjectId],
       default: [],
+    },
+    creator: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
     },
   },
   {

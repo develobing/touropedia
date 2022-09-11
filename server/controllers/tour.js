@@ -8,6 +8,7 @@ export const getTours = async (req, res) => {
     const searchFilter = !!searchQuery ? { title } : {};
     const startIndex = (Number(page) - 1) * Number(limit);
 
+    const totalToursData = await Tour.find();
     const total = await Tour.countDocuments(searchFilter);
     const tours = await Tour.find(searchFilter)
       .populate('creator')
@@ -18,6 +19,7 @@ export const getTours = async (req, res) => {
       data: tours,
       currentPage: Number(page),
       totalTours: total,
+      totalToursData,
       numberOfPages: Math.ceil(total / limit),
     });
   } catch (error) {
@@ -101,7 +103,7 @@ export const createTour = async (req, res) => {
 export const updateTour = async (req, res) => {
   try {
     const { _id } = req.params;
-    const { title, description, tags, imageFile, creator } = req.body;
+    const { title, description, category, tags, imageFile, creator } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(_id)) {
       return res.status(400).json({ message: `No tour exist wit id: ${_id}` });
@@ -161,6 +163,17 @@ export const likeTour = async (req, res) => {
     res.status(200).json(updatedTour);
   } catch (error) {
     console.log('likeTour() - error', error);
+    res.status(500).json({ message: 'Something went wrong' });
+  }
+};
+
+export const getAllTags = async (req, res) => {
+  try {
+    const totalTags = await Tour.find().distinct('tags');
+
+    res.json(totalTags);
+  } catch (error) {
+    console.log('getAllTags() - error', error);
     res.status(500).json({ message: 'Something went wrong' });
   }
 };

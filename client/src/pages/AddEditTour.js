@@ -23,8 +23,11 @@ import * as api from '../redux/api';
 const initalState = {
   title: '',
   description: '',
+  category: '',
   tags: [],
 };
+
+const categoryOptions = ['City', 'Beach', 'Mountain', 'Forest', 'Historic'];
 
 const AddEditTour = () => {
   const dispatch = useDispatch();
@@ -34,10 +37,11 @@ const AddEditTour = () => {
   const { userTours, error } = useSelector((state) => state.tour);
 
   const [tourData, setTourData] = useState(initalState);
+  const [categoryErrMsg, setCategoryErrMsg] = useState(null);
   const [tagErrMsg, setTagErrMsg] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
 
-  const { title, description, tags } = tourData;
+  const { title, description, category, tags } = tourData;
 
   useEffect(() => {
     if (_id) {
@@ -91,19 +95,39 @@ const AddEditTour = () => {
     });
   };
 
+  const handleCategoryChange = (e) => {
+    setCategoryErrMsg(null);
+    setTourData({ ...tourData, category: e.target.value });
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+    if (!category) {
+      setCategoryErrMsg('Please select a category');
+      isValid = false;
+    }
+    if (tags.length === 0) {
+      setTagErrMsg('Please add at least one tag');
+      isValid = false;
+    }
+
+    if (!title?.trim() || !description.trim() || !tags) {
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (tags.length === 0) {
-      setTagErrMsg('Please add at least one tag');
-      return;
-    }
+    const isValid = validateForm();
 
-    const imageFile = await handleImageUpload(selectedFile);
+    if (isValid) {
+      const imageFile = await handleImageUpload(selectedFile);
 
-    // Create tour
-    if (!_id) {
-      if (title && description && tags) {
+      // Create tour
+      if (!_id) {
         dispatch(
           createTour({
             data: { ...tourData, imageFile },
@@ -112,13 +136,13 @@ const AddEditTour = () => {
           })
         );
       }
-    }
 
-    // Update tour
-    else {
-      dispatch(
-        updateTour({ _id, data: { ...tourData, imageFile }, toast, navigate })
-      );
+      // Update tour
+      else {
+        dispatch(
+          updateTour({ _id, data: { ...tourData, imageFile }, toast, navigate })
+        );
+      }
     }
   };
 
@@ -171,9 +195,32 @@ const AddEditTour = () => {
             </div>
 
             <div className="col-md-12">
+              <select
+                className={`category-dropdown  ${
+                  categoryErrMsg ? 'form-input-error' : ''
+                }`}
+                onChange={handleCategoryChange}
+                value={category}
+              >
+                <option>Please select category</option>
+                {categoryOptions.map((option, index) => (
+                  <option key={index} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+
+              {categoryErrMsg && (
+                <div className="categoryErrMsg">{categoryErrMsg}</div>
+              )}
+            </div>
+
+            <div className="col-md-12">
               <ChipInput
                 fullWidth
-                className="form-control"
+                className={`form-control ${
+                  tagErrMsg ? 'form-input-error' : ''
+                }`}
                 placeholder="Enter Tags"
                 variant="outlined"
                 value={tags}

@@ -1,20 +1,70 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { MDBContainer, MDBCol, MDBRow, MDBTypography } from 'mdb-react-ui-kit';
-import { getTours } from '../redux/features/tourSlice';
+import { getTours, getAllTags } from '../redux/features/tourSlice';
 import TourCard from '../components/TourCard';
 import Spinner from '../components/Spinner';
 import Pagination from '../components/Pagination';
+import PopularTags from '../components/PopularTags';
+import Categories from '../components/Categories';
 
 const Home = ({ socket }) => {
   const dispatch = useDispatch();
 
-  const { tours, searchQuery, currentPage, numberOfPages, loading } =
-    useSelector((state) => state.tour);
+  const {
+    tours,
+    searchQuery,
+    currentPage,
+    numberOfPages,
+    totalTags,
+    totalToursData,
+    loading,
+  } = useSelector((state) => state.tour);
+
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+  const counts = totalToursData.reduce((prevValue, currentValue) => {
+    let name = currentValue.category;
+    if (!prevValue.hasOwnProperty(name)) {
+      prevValue[name] = 0;
+    }
+
+    prevValue[name]++;
+    delete prevValue['undefined'];
+    return prevValue;
+  }, {});
+
+  const categoryCount = Object.keys(counts).map((k) => {
+    return {
+      category: k,
+      count: counts[k],
+    };
+  });
+
+  const checkScreenSize = () => {
+    if (window.innerWidth < 950) {
+      setIsSmallScreen(true);
+    } else {
+      setIsSmallScreen(false);
+    }
+  };
+
+  useEffect(() => {
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => {
+      window.removeEventListener('resize', checkScreenSize);
+    };
+  }, []);
 
   useEffect(() => {
     dispatch(getTours({ page: currentPage, searchQuery }));
   }, [currentPage, searchQuery, dispatch]);
+
+  useEffect(() => {
+    dispatch(getAllTags());
+  }, []);
 
   return loading ? (
     <Spinner />
@@ -23,7 +73,7 @@ const Home = ({ socket }) => {
       style={{
         margin: 'auto',
         padding: '20px',
-        maxWidth: '1000px',
+        maxWidth: '1280px',
         alignContent: 'center',
       }}
     >
@@ -45,11 +95,28 @@ const Home = ({ socket }) => {
             </MDBContainer>
           </MDBCol>
         )}
-      </MDBRow>
 
-      {tours.length > 0 && (
-        <Pagination currentPage={currentPage} numberOfPages={numberOfPages} />
-      )}
+        {isSmallScreen ? (
+          <div className="mt-4">
+            <PopularTags totalTags={totalTags} />
+            <Categories categoryCount={categoryCount} />
+          </div>
+        ) : (
+          <MDBCol size="3" className="mt-4">
+            <PopularTags totalTags={totalTags} />
+            <Categories categoryCount={categoryCount} />
+          </MDBCol>
+        )}
+
+        <div className="mt-3">
+          {tours.length > 0 && (
+            <Pagination
+              currentPage={currentPage}
+              numberOfPages={numberOfPages}
+            />
+          )}
+        </div>
+      </MDBRow>
     </div>
   );
 };

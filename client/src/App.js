@@ -12,6 +12,7 @@ import AddEditTour from './pages/AddEditTour';
 import SingleTour from './pages/SingleTour';
 import Dashboard from './pages/Dashboard';
 import TagTours from './pages/TagTours';
+import Category from './pages/Category';
 import NotFound from './pages/NotFound';
 import { setUser } from './redux/features/authSlice';
 import './App.css';
@@ -50,6 +51,7 @@ function App() {
           <Route path="/" element={<Home socket={socket} />} />
           <Route path="/tours/search" element={<Home />} />
           <Route path="/tours/tags/:tag" element={<TagTours />} />
+          <Route path="/tours/category/:category" element={<Category />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route

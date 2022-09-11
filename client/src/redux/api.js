@@ -31,6 +31,7 @@ export const getRelatedTours = (_id, data) =>
   API.post(`/tours/${_id}/related-tours`, data);
 export const getToursByUser = (_userId) => API.get(`/tours/users/${_userId}`);
 export const getTour = (_id) => API.get(`/tours/${_id}`);
+export const getAllTags = () => API.get('/tours/tags');
 export const createTour = (tourData) => API.post('/tours', tourData);
 export const updateTour = (_id, tourData) => API.put(`/tours/${_id}`, tourData);
 export const deleteTour = (_id) => API.delete(`/tours/${_id}`);

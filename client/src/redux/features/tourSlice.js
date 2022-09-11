@@ -153,6 +153,22 @@ export const likeTour = createAsyncThunk(
   }
 );
 
+export const getAllTags = createAsyncThunk(
+  'tour/getAllTags',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.getAllTags();
+      console.log('getAllTags() - response', response);
+
+      return response.data;
+    } catch (error) {
+      console.log('getAllTags() - error: ', error);
+
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const tourSlice = createSlice({
   name: 'tour',
 
@@ -162,6 +178,8 @@ const tourSlice = createSlice({
     userTours: [],
     tagTours: [],
     relatedTours: [],
+    totalTags: [],
+    totalToursData: [],
     currentPage: 1,
     searchQuery: '',
     numberOfPages: null,
@@ -191,6 +209,7 @@ const tourSlice = createSlice({
       state.loading = false;
       state.tours = action.payload.data;
       state.numberOfPages = action.payload.numberOfPages;
+      state.totalToursData = action.payload.totalToursData;
     },
     [getTours.rejected]: (state, action) => {
       state.loading = false;
@@ -317,6 +336,18 @@ const tourSlice = createSlice({
       }
     },
     [likeTour.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.message;
+    },
+
+    [getAllTags.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [getAllTags.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.totalTags = action.payload;
+    },
+    [getAllTags.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload.message;
     },
