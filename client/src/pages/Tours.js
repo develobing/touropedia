@@ -20,6 +20,7 @@ const Tours = () => {
   useEffect(() => {
     if (!isLoaded) {
       dispatch(loadMoreTours({ skip: 0, limit }));
+      /* eslint-disable */
       isLoaded = true;
     }
   }, []);

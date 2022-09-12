@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
 import {
   MDBNavbar,
   MDBContainer,
   MDBIcon,
-  MDBNavbarBrand,
   MDBNavbarNav,
   MDBNavbarToggler,
   MDBCollapse,
   MDBNavbarItem,
-  MDBNavbarLink,
   MDBBadge,
   MDBBtn,
 } from 'mdb-react-ui-kit';
@@ -27,7 +25,9 @@ const Header = ({ socket }) => {
   const { user } = useSelector((state) => state.auth);
   const { userDetail } = useSelector((state) => state.profile);
 
+  const [search, setSearch] = useState('');
   const [notifications, setNotifications] = useState([]);
+  const [isOpenSideMenu, setIsOpenSideMenu] = useState(false);
   const [isOpenNotification, setIsOpenNotification] = useState(false);
 
   const token = user?.token;
@@ -55,9 +55,6 @@ const Header = ({ socket }) => {
     }
   }
 
-  const [show, setShow] = useState(false);
-  const [search, setSearch] = useState('');
-
   const handleLogout = () => {
     dispatch(removeUser());
   };
@@ -72,10 +69,8 @@ const Header = ({ socket }) => {
     }
   };
 
-  const handleBell = () => {
-    if (notifications.length) {
-      setIsOpenNotification(!isOpenNotification);
-    }
+  const handleClickBell = () => {
+    setIsOpenNotification(!isOpenNotification);
   };
 
   const handleRead = () => {
@@ -92,56 +87,56 @@ const Header = ({ socket }) => {
   return (
     <MDBNavbar expand="lg" style={{ backgroundColor: '#f0e6ea' }}>
       <MDBContainer fluid>
-        <MDBNavbarBrand
-          href="/"
+        <Link
+          to="/"
           style={{ color: '#606080', fontWeight: '600', fontSize: '22px' }}
         >
           Touropedia
-        </MDBNavbarBrand>
+        </Link>
 
         <MDBNavbarToggler
           aria-controls="navbarSupportedContent"
           aria-expanded="false"
           aria-label="Toggle navigation"
           style={{ color: '#606080' }}
-          onClick={() => setShow(!show)}
+          onClick={() => setIsOpenSideMenu(!isOpenSideMenu)}
         >
           <MDBIcon icon="bars" fas />
         </MDBNavbarToggler>
 
-        <MDBCollapse navbar show={show}>
+        <MDBCollapse navbar show={isOpenSideMenu}>
           <MDBNavbarNav right fullWidth={false} className="mb-2 mb-lg-0">
             <MDBNavbarItem>
-              <MDBNavbarLink href="/">
+              <Link className="nav-link" to="/">
                 <p className="header-text">Home</p>
-              </MDBNavbarLink>
+              </Link>
             </MDBNavbarItem>
 
             {_userId ? (
               <>
                 <MDBNavbarItem>
-                  <MDBNavbarLink href="/add-tour">
+                  <Link className="nav-link" to="/add-tour">
                     <p className="header-text">Add Tour</p>
-                  </MDBNavbarLink>
+                  </Link>
                 </MDBNavbarItem>
 
                 <MDBNavbarItem>
-                  <MDBNavbarLink href="/dashboard">
+                  <Link className="nav-link" to="/dashboard">
                     <p className="header-text">Dashboard</p>
-                  </MDBNavbarLink>
+                  </Link>
                 </MDBNavbarItem>
 
                 <MDBNavbarItem>
-                  <MDBNavbarLink href="/" onClick={handleLogout}>
+                  <Link className="nav-link" to="/" onClick={handleLogout}>
                     <p className="header-text">Logout</p>
-                  </MDBNavbarLink>
+                  </Link>
                 </MDBNavbarItem>
               </>
             ) : (
               <MDBNavbarItem>
-                <MDBNavbarLink href="/login">
+                <Link className="nav-link" to="/login">
                   <p className="header-text">Login</p>
-                </MDBNavbarLink>
+                </Link>
               </MDBNavbarItem>
             )}
           </MDBNavbarNav>
@@ -167,8 +162,8 @@ const Header = ({ socket }) => {
             <>
               <div
                 style={{
-                  display: show ? 'inline-block' : 'block',
-                  margin: show ? '15px 0 5px 0' : '',
+                  display: isOpenSideMenu ? 'inline-block' : 'block',
+                  margin: isOpenSideMenu ? '15px 0 5px 0' : '',
                   marginLeft: '10px',
                   cursor: 'pointer',
                 }}
@@ -188,10 +183,10 @@ const Header = ({ socket }) => {
               <div
                 className="mx-3"
                 style={{
-                  display: show ? 'inline-block' : 'block',
-                  margin: show ? '15px 0 5px 0' : '',
+                  display: isOpenSideMenu ? 'inline-block' : 'block',
+                  margin: isOpenSideMenu ? '15px 0 5px 0' : '',
                 }}
-                onClick={handleBell}
+                onClick={handleClickBell}
               >
                 <MDBIcon fas icon="bell" style={{ cursor: 'pointer' }} />
                 <MDBBadge notification pill color="danger">
@@ -208,19 +203,38 @@ const Header = ({ socket }) => {
               className="notification"
               onClick={() => setIsOpenNotification(false)}
             >
-              {notifications.map((notification) =>
-                displayNotification(notification)
-              )}
+              {notifications.length > 0 ? (
+                <>
+                  {notifications.map((notification) =>
+                    displayNotification(notification)
+                  )}
 
-              <div className="align-item-center">
-                <MDBBtn
-                  size="sm"
-                  style={{ width: '150px', backgroundColor: '#ec4a89' }}
-                  onClick={handleRead}
-                >
-                  Mark as all read
-                </MDBBtn>
-              </div>
+                  <div className="align-item-center">
+                    <MDBBtn
+                      size="sm"
+                      style={{ width: '150px', backgroundColor: '#ec4a89' }}
+                      onClick={handleRead}
+                    >
+                      Mark as all read
+                    </MDBBtn>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <span className="notification-content">
+                    You have no notification
+                  </span>
+
+                  <div className="align-item-center">
+                    <MDBBtn
+                      size="sm"
+                      style={{ width: '150px', backgroundColor: '#ec4a89' }}
+                    >
+                      Close
+                    </MDBBtn>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </MDBCollapse>
